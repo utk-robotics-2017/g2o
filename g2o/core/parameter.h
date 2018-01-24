@@ -31,11 +31,12 @@
 
 #include "hyper_graph.h"
 
-namespace g2o {
+namespace g2o
+{
 
     class G2O_CORE_API Parameter : public HyperGraph::HyperGraphElement
     {
-      public:
+    public:
         Parameter();
         virtual ~Parameter() {};
         //! read the data from a stream
@@ -45,7 +46,7 @@ namespace g2o {
         int id() const {return _id;}
         void setId(int id_);
         virtual HyperGraph::HyperGraphElementType elementType() const { return HyperGraph::HGET_PARAMETER;}
-      protected:
+    protected:
         int _id;
     };
 

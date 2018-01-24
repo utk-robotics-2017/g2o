@@ -28,33 +28,35 @@
 
 using namespace std;
 
-namespace g2o {
-
-OptimizationAlgorithm::OptimizationAlgorithm()
-  : _optimizer(nullptr)
-{}
-
-OptimizationAlgorithm::~OptimizationAlgorithm()
-{}
-
-void OptimizationAlgorithm::printProperties(std::ostream& os) const
+namespace g2o
 {
-  os << "------------- Algorithm Properties -------------"  << endl;
-  for (PropertyMap::const_iterator it = _properties.begin(); it != _properties.end(); ++it) {
-    BaseProperty* p = it->second;
-    os << it->first << "\t" << p->toString() << endl;
-  }
-  os << "------------------------------------------------" << endl;
-}
 
-bool OptimizationAlgorithm::updatePropertiesFromString(const std::string& propString)
-{
-  return _properties.updateMapFromString(propString);
-}
+    OptimizationAlgorithm::OptimizationAlgorithm()
+        : _optimizer(nullptr)
+    {}
 
-void OptimizationAlgorithm::setOptimizer(SparseOptimizer* optimizer)
-{
-  _optimizer = optimizer;
-}
+    OptimizationAlgorithm::~OptimizationAlgorithm()
+    {}
+
+    void OptimizationAlgorithm::printProperties(std::ostream& os) const
+    {
+        os << "------------- Algorithm Properties -------------"  << endl;
+        for (PropertyMap::const_iterator it = _properties.begin(); it != _properties.end(); ++it)
+        {
+            BaseProperty* p = it->second;
+            os << it->first << "\t" << p->toString() << endl;
+        }
+        os << "------------------------------------------------" << endl;
+    }
+
+    bool OptimizationAlgorithm::updatePropertiesFromString(const std::string& propString)
+    {
+        return _properties.updateMapFromString(propString);
+    }
+
+    void OptimizationAlgorithm::setOptimizer(SparseOptimizer* optimizer)
+    {
+        _optimizer = optimizer;
+    }
 
 } // end namespace

@@ -26,21 +26,22 @@
 
 #include "robust_kernel.h"
 
-namespace g2o {
-
-RobustKernel::RobustKernel() :
-  _delta(1.)
+namespace g2o
 {
-}
 
-RobustKernel::RobustKernel(number_t delta) :
-  _delta(delta)
-{
-}
+    RobustKernel::RobustKernel() :
+        _delta(1.)
+    {
+    }
 
-void RobustKernel::setDelta(number_t delta)
-{
-  _delta = delta;
-}
+    RobustKernel::RobustKernel(number_t delta) :
+        _delta(delta)
+    {
+    }
+
+    void RobustKernel::setDelta(number_t delta)
+    {
+        _delta = delta;
+    }
 
 } // end namespace g2o

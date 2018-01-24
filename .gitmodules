@@ -1,0 +1,3 @@
+[submodule "eigen"]
+	path = eigen
+	url = git@github.com:utk-robotics-2017/eigen.git

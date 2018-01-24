@@ -2,7 +2,7 @@
 
 #include <cstddef>
 
-#include "Eigen/Core"
+#include "eigen3/Eigen/Core"
 
 namespace g2o
 {
@@ -42,7 +42,9 @@ namespace g2o
         Type* request(size_t n)
         {
             if (n <= m_size)
+            {
                 return m_ptr;
+            }
 
             m_ptr = reallocate_aligned<Type>(m_ptr, n, m_size);
             m_size = m_ptr ? n : 0;
@@ -55,7 +57,9 @@ namespace g2o
         {
             m_ptr = allocate_aligned<Type>(size);
             if (m_ptr != nullptr)
+            {
                 m_size = size;
+            }
         }
 
         void free()

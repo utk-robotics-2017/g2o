@@ -36,43 +36,46 @@
 
 #include "g2o/stuff/macros.h"
 
-namespace g2o {
+namespace g2o
+{
 
-  namespace
-  {
-    template<int p, int l, bool blockorder>
-    std::unique_ptr<BlockSolverBase> AllocateSolver()
+    namespace
     {
-      std::cerr << "# Using CSparse poseDim " << p << " landMarkDim " << l << " blockordering " << blockorder << std::endl;
-      auto linearSolver = g2o::make_unique<LinearSolverCSparse<typename BlockSolverPL<p, l>::PoseMatrixType>>();
-      linearSolver->setBlockOrdering(blockorder);
-      return g2o::make_unique<BlockSolverPL<p, l>>(std::move(linearSolver));
+        template<int p, int l, bool blockorder>
+        std::unique_ptr<BlockSolverBase> AllocateSolver()
+        {
+            std::cerr << "# Using CSparse poseDim " << p << " landMarkDim " << l << " blockordering " << blockorder << std::endl;
+            auto linearSolver = g2o::make_unique<LinearSolverCSparse<typename BlockSolverPL<p, l>::PoseMatrixType>>();
+            linearSolver->setBlockOrdering(blockorder);
+            return g2o::make_unique<BlockSolverPL<p, l>>(std::move(linearSolver));
+        }
     }
-  }
 
-  /**
-   * helper function for allocating
-   */
-  static OptimizationAlgorithm* createSolver(const std::string& fullSolverName)
-  {
-    if (fullSolverName != "2dlinear")
-      return nullptr;
+    /**
+     * helper function for allocating
+     */
+    static OptimizationAlgorithm* createSolver(const std::string& fullSolverName)
+    {
+        if (fullSolverName != "2dlinear")
+        {
+            return nullptr;
+        }
 
-    return new SolverSLAM2DLinear{ AllocateSolver<3, 2, true>() };
-  }
+        return new SolverSLAM2DLinear{ AllocateSolver<3, 2, true>() };
+    }
 
-  class SLAM2DLinearSolverCreator : public AbstractOptimizationAlgorithmCreator
-  {
+    class SLAM2DLinearSolverCreator : public AbstractOptimizationAlgorithmCreator
+    {
     public:
-      SLAM2DLinearSolverCreator(const OptimizationAlgorithmProperty& p) : AbstractOptimizationAlgorithmCreator(p) {}
-      virtual OptimizationAlgorithm* construct()
-      {
-        return createSolver(property().name);
-      }
-  };
+        SLAM2DLinearSolverCreator(const OptimizationAlgorithmProperty& p) : AbstractOptimizationAlgorithmCreator(p) {}
+        virtual OptimizationAlgorithm* construct()
+        {
+            return createSolver(property().name);
+        }
+    };
 
-  G2O_REGISTER_OPTIMIZATION_LIBRARY(slam2d_linear);
+    G2O_REGISTER_OPTIMIZATION_LIBRARY(slam2d_linear);
 
-  G2O_REGISTER_OPTIMIZATION_ALGORITHM(2dlinear, new SLAM2DLinearSolverCreator(OptimizationAlgorithmProperty("2dlinear", "Solve Orientation + Gauss-Newton: Works only on 2D pose graphs!!", "CSparse", false, 3, 3)));
+    G2O_REGISTER_OPTIMIZATION_ALGORITHM(2dlinear, new SLAM2DLinearSolverCreator(OptimizationAlgorithmProperty("2dlinear", "Solve Orientation + Gauss-Newton: Works only on 2D pose graphs!!", "CSparse", false, 3, 3)));
 
 } // end namespace

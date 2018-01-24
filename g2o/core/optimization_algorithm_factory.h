@@ -40,105 +40,106 @@
 // define to get some verbose output
 //#define G2O_DEBUG_OPTIMIZATION_ALGORITHM_FACTORY
 
-namespace g2o {
+namespace g2o
+{
 
-  // forward decl
-  class G2O_CORE_API OptimizationAlgorithm;
-  class G2O_CORE_API SparseOptimizer;
+    // forward decl
+    class G2O_CORE_API OptimizationAlgorithm;
+    class G2O_CORE_API SparseOptimizer;
 
-  /**
-   * \brief base for allocating an optimization algorithm
-   *
-   * Allocating a solver for a given optimizer. The method construct() has to be
-   * implemented in your derived class to allocate the desired solver.
-   */
-  class G2O_CORE_API AbstractOptimizationAlgorithmCreator
-  {
+    /**
+     * \brief base for allocating an optimization algorithm
+     *
+     * Allocating a solver for a given optimizer. The method construct() has to be
+     * implemented in your derived class to allocate the desired solver.
+     */
+    class G2O_CORE_API AbstractOptimizationAlgorithmCreator
+    {
     public:
-      AbstractOptimizationAlgorithmCreator(const OptimizationAlgorithmProperty& p);
-      virtual ~AbstractOptimizationAlgorithmCreator() { }
-      //! allocate a solver operating on optimizer, re-implement for your creator
-      virtual OptimizationAlgorithm* construct() = 0;
-      //! return the properties of the solver
-      const OptimizationAlgorithmProperty& property() const { return _property;}
+        AbstractOptimizationAlgorithmCreator(const OptimizationAlgorithmProperty& p);
+        virtual ~AbstractOptimizationAlgorithmCreator() { }
+        //! allocate a solver operating on optimizer, re-implement for your creator
+        virtual OptimizationAlgorithm* construct() = 0;
+        //! return the properties of the solver
+        const OptimizationAlgorithmProperty& property() const { return _property;}
     protected:
-      OptimizationAlgorithmProperty _property;
-  };
-  
-  /**
-   * \brief create solvers based on their short name
-   *
-   * Factory to allocate solvers based on their short name.
-   * The Factory is implemented as a sigleton and the single
-   * instance can be accessed via the instance() function.
-   */
-  class G2O_CORE_API OptimizationAlgorithmFactory
-  {
+        OptimizationAlgorithmProperty _property;
+    };
+
+    /**
+     * \brief create solvers based on their short name
+     *
+     * Factory to allocate solvers based on their short name.
+     * The Factory is implemented as a sigleton and the single
+     * instance can be accessed via the instance() function.
+     */
+    class G2O_CORE_API OptimizationAlgorithmFactory
+    {
     public:
-      typedef std::list<AbstractOptimizationAlgorithmCreator*>      CreatorList;
+        typedef std::list<AbstractOptimizationAlgorithmCreator*>      CreatorList;
 
-      //! return the instance
-      static OptimizationAlgorithmFactory* instance();
+        //! return the instance
+        static OptimizationAlgorithmFactory* instance();
 
-      //! free the instance
-      static void destroy();
+        //! free the instance
+        static void destroy();
 
-      /**
-       * register a specific creator for allocating a solver
-       */
-      void registerSolver(AbstractOptimizationAlgorithmCreator* c);
+        /**
+         * register a specific creator for allocating a solver
+         */
+        void registerSolver(AbstractOptimizationAlgorithmCreator* c);
 
-      /**
-       * unregister a specific creator for allocating a solver
-       */
-      void unregisterSolver(AbstractOptimizationAlgorithmCreator* c);
-      
-      /**
-       * construct a solver based on its name, e.g., var, fix3_2_cholmod
-       */
-      OptimizationAlgorithm* construct(const std::string& tag, OptimizationAlgorithmProperty& solverProperty) const;
+        /**
+         * unregister a specific creator for allocating a solver
+         */
+        void unregisterSolver(AbstractOptimizationAlgorithmCreator* c);
 
-      //! list the known solvers into a stream
-      void listSolvers(std::ostream& os) const;
+        /**
+         * construct a solver based on its name, e.g., var, fix3_2_cholmod
+         */
+        OptimizationAlgorithm* construct(const std::string& tag, OptimizationAlgorithmProperty& solverProperty) const;
 
-      //! return the underlying list of creators
-      const CreatorList& creatorList() const { return _creator;}
+        //! list the known solvers into a stream
+        void listSolvers(std::ostream& os) const;
+
+        //! return the underlying list of creators
+        const CreatorList& creatorList() const { return _creator;}
 
     protected:
-      OptimizationAlgorithmFactory();
-      ~OptimizationAlgorithmFactory();
+        OptimizationAlgorithmFactory();
+        ~OptimizationAlgorithmFactory();
 
-      CreatorList _creator;
+        CreatorList _creator;
 
-      CreatorList::const_iterator findSolver(const std::string& name) const;
-      CreatorList::iterator findSolver(const std::string& name);
+        CreatorList::const_iterator findSolver(const std::string& name) const;
+        CreatorList::iterator findSolver(const std::string& name);
 
     private:
-      static OptimizationAlgorithmFactory* factoryInstance;
-  };
+        static OptimizationAlgorithmFactory* factoryInstance;
+    };
 
-  class RegisterOptimizationAlgorithmProxy
-  {
+    class RegisterOptimizationAlgorithmProxy
+    {
     public:
-      RegisterOptimizationAlgorithmProxy(AbstractOptimizationAlgorithmCreator* c)
-      {
-        _creator = c;
+        RegisterOptimizationAlgorithmProxy(AbstractOptimizationAlgorithmCreator* c)
+        {
+            _creator = c;
 #ifdef G2O_DEBUG_OPTIMIZATION_ALGORITHM_FACTORY
-        std::cout << __FUNCTION__ << ": Registering " << _creator->property().name << " of type " << typeid(*_creator).name() << std::endl;
+            std::cout << __FUNCTION__ << ": Registering " << _creator->property().name << " of type " << typeid(*_creator).name() << std::endl;
 #endif
-        OptimizationAlgorithmFactory::instance()->registerSolver(c);
-      }
+            OptimizationAlgorithmFactory::instance()->registerSolver(c);
+        }
 
-      ~RegisterOptimizationAlgorithmProxy()
-      {
+        ~RegisterOptimizationAlgorithmProxy()
+        {
 #ifdef G2O_DEBUG_OPTIMIZATION_ALGORITHM_FACTORY
-        std::cout << __FUNCTION__ << ": Unregistering " << _creator->property().name << std::endl;
+            std::cout << __FUNCTION__ << ": Unregistering " << _creator->property().name << std::endl;
 #endif
-        OptimizationAlgorithmFactory::instance()->unregisterSolver(_creator);
-      }
+            OptimizationAlgorithmFactory::instance()->unregisterSolver(_creator);
+        }
     private:
-      AbstractOptimizationAlgorithmCreator* _creator;
-  };
+        AbstractOptimizationAlgorithmCreator* _creator;
+    };
 
 }
 
